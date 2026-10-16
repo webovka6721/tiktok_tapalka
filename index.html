@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TikTok Coin Tapper</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            ttCyan: '#25F4EE',
+            ttRed: '#FE2C55',
+            ttPurple: '#9D4EDD',
+            ttDarkPurple: '#1f0742',
+            ttDeep: '#100224',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #0d021c;
+      touch-action: manipulation;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* TikTok Neon Dual Text Glow */
+    .tiktok-text-glow {
+      text-shadow: -1.5px -1.5px 0 #25F4EE, 1.5px 1.5px 0 #FE2C55;
+    }
+
+    /* Dynamic Shifting Iridescent TikTok Mesh Background */
+    @keyframes iridescentFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .vibrant-mesh-bg {
+      background: linear-gradient(135deg, #1c053a, #380c69, #130226, #460d7b, #260548, #0e021f);
+      background-size: 350% 350%;
+      animation: iridescentFlow 14s ease-in-out infinite;
+    }
+
+    /* Shifting Luminous TikTok Auroras */
+    @keyframes orbMotion1 {
+      0%, 100% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
+      33% { transform: translate(50px, -50px) scale(1.35) rotate(45deg); }
+      66% { transform: translate(-40px, 40px) scale(0.95) rotate(-30deg); }
+    }
+
+    @keyframes orbMotion2 {
+      0%, 100% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
+      40% { transform: translate(-55px, 45px) scale(1.3) rotate(-50deg); }
+      75% { transform: translate(45px, -35px) scale(0.92) rotate(35deg); }
+    }
+
+    @keyframes orbMotion3 {
+      0%, 100% { transform: translate(0px, 0px) scale(1); }
+      50% { transform: translate(35px, 60px) scale(1.4); }
+    }
+
+    @keyframes orbMotion4 {
+      0%, 100% { transform: translate(0px, 0px) scale(1); }
+      50% { transform: translate(-40px, -30px) scale(1.28); }
+    }
+
+    .orb-purple { animation: orbMotion1 10s ease-in-out infinite; }
+    .orb-cyan   { animation: orbMotion2 12s ease-in-out infinite; }
+    .orb-pink   { animation: orbMotion3 11s ease-in-out infinite; }
+    .orb-violet { animation: orbMotion4 13s ease-in-out infinite; }
+
+    /* Shimmering Ambient Light Sweep */
+    @keyframes shimmerSweep {
+      0% { transform: translateY(-100%) rotate(25deg); opacity: 0.12; }
+      50% { opacity: 0.32; }
+      100% { transform: translateY(200%) rotate(25deg); opacity: 0.12; }
+    }
+
+    .shimmer-light-beam {
+      animation: shimmerSweep 9s linear infinite;
+    }
+
+    /* Turbo Glow applied directly to the 3D coin (No artificial background circles) */
+    .coin-turbo-glow {
+      filter: drop-shadow(0 0 30px #25F4EE) drop-shadow(0 0 55px #FE2C55) brightness(1.22) !important;
+      animation: turboCoinPulse 1.1s ease-in-out infinite alternate;
+    }
+
+    @keyframes turboCoinPulse {
+      0% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 25px #25F4EE) drop-shadow(0 0 45px #FE2C55) brightness(1.15);
+      }
+      100% {
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 40px #25F4EE) drop-shadow(0 0 70px #FE2C55) brightness(1.35);
+      }
+    }
+
+    /* Punchy Tap Feedback & Shockwave Ring */
+    .coin-active-press {
+      transform: scale(0.86) !important;
+      filter: drop-shadow(0 0 45px rgba(37, 244, 238, 0.85)) brightness(1.4) !important;
+      transition: transform 0.06s cubic-bezier(0.1, 0.9, 0.2, 1), filter 0.06s ease;
+    }
+
+    @keyframes tapRingOut {
+      0% {
+        transform: translate(-50%, -50%) scale(0.2);
+        opacity: 1;
+        border-width: 6px;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(2.6);
+        opacity: 0;
+        border-width: 1px;
+      }
+    }
+
+    .shockwave-ring {
+      position: absolute;
+      border-radius: 9999px;
+      pointer-events: none;
+      border-color: #25F4EE;
+      box-shadow: 0 0 25px #FE2C55;
+      animation: tapRingOut 0.55s ease-out forwards;
+    }
+
+    /* Floating Rising Numbers (+1, +10) */
+    @keyframes floatUpFade {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, 0px) scale(1.25);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -110px) scale(1.6);
+      }
+    }
+
+    .floating-tap-number {
+      position: absolute;
+      pointer-events: none;
+      z-index: 50;
+      animation: floatUpFade 0.75s ease-out forwards;
+    }
+  </style>
+</head>
+
+<body class="w-screen h-[100dvh] flex items-center justify-center bg-[#0d021c] text-white">
+
+  <!-- Mobile Vertical Layout Viewport -->
+  <main class="w-full max-w-md h-full flex flex-col justify-between relative overflow-hidden vibrant-mesh-bg shadow-[0_0_60px_rgba(157,78,221,0.25)]">
+
+    <!-- Vibrant Shifting Iridescent TikTok Background Lights -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
+      <!-- High-saturation neon orbs with screen blending -->
+      <div class="orb-purple absolute -top-16 -left-16 w-96 h-96 rounded-full bg-[#9333EA]/38 blur-[80px] mix-blend-screen"></div>
+      <div class="orb-cyan absolute top-1/5 -right-24 w-96 h-96 rounded-full bg-[#25F4EE]/32 blur-[90px] mix-blend-screen"></div>
+      <div class="orb-pink absolute top-1/2 -left-20 w-88 h-88 rounded-full bg-[#FE2C55]/36 blur-[85px] mix-blend-screen"></div>
+      <div class="orb-violet absolute -bottom-10 right-0 w-96 h-96 rounded-full bg-[#7928CA]/42 blur-[80px] mix-blend-screen"></div>
+      <div class="orb-cyan absolute bottom-1/4 left-1/3 w-64 h-64 rounded-full bg-[#25F4EE]/22 blur-[75px] mix-blend-screen"></div>
+
+      <!-- Shimmering Light Sweep across screen -->
+      <div class="absolute -inset-x-full h-[150%] bg-gradient-to-b from-transparent via-white/[0.05] to-transparent shimmer-light-beam pointer-events-none"></div>
+
+      <!-- Luminous center atmosphere with subtle vignette -->
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04)_0%,transparent_60%,rgba(10,2,24,0.55)_100%)] pointer-events-none"></div>
+    </div>
+
+    <!-- Top Header (Profile & Action Buttons) -->
+    <header class="relative z-10 w-full px-5 pt-8 pb-2 flex items-center justify-between">
+      
+      <!-- Creator Avatar & Username -->
+      <div id="profileContainer" class="flex items-center gap-3 cursor-pointer group active:scale-95 transition-transform" title="Tap to change handle">
+        <div class="w-11 h-11 rounded-full overflow-hidden p-[2px] bg-gradient-to-tr from-ttCyan to-ttRed shadow-[0_0_15px_rgba(37,244,238,0.4)]">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" 
+               alt="Creator Profile" 
+               class="w-full h-full object-cover rounded-full">
+        </div>
+        <div class="flex flex-col text-left">
+          <div class="flex items-center gap-1.5">
+            <span id="creatorHandle" class="text-sm font-bold tracking-tight text-white group-hover:text-ttCyan transition-colors">@tiktok.creator</span>
+            <svg class="w-3.5 h-3.5 text-ttCyan" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <span class="text-[11px] text-white/60 font-medium">TikTok Live</span>
+        </div>
+      </div>
+
+      <!-- Header Actions: Sound & Withdraw -->
+      <div class="flex items-center gap-2.5">
+        
+        <!-- Sound Toggle Button -->
+        <button id="soundToggleBtn" class="w-10 h-10 rounded-2xl bg-white/10 hover:bg-white/15 active:scale-90 border border-white/10 flex items-center justify-center transition-all backdrop-blur-md">
+          <svg id="soundIconOn" class="w-5 h-5 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+          </svg>
+          <svg id="soundIconOff" class="w-5 h-5 text-white/40 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+          </svg>
+        </button>
+
+        <!-- Withdraw Button -->
+        <button id="withdrawBtn" class="px-3.5 py-2 rounded-2xl bg-gradient-to-r from-ttCyan/20 to-ttRed/20 hover:from-ttCyan/30 hover:to-ttRed/30 active:scale-95 border border-purple-400/30 flex items-center gap-1.5 shadow-[0_0_15px_rgba(157,78,221,0.3)] transition-all backdrop-blur-md">
+          <svg class="w-4 h-4 text-ttCyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          <span class="text-xs font-bold text-white tracking-wide">Withdraw</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Balance & Coin Display -->
+    <section class="relative z-10 flex flex-col items-center justify-center mt-3 text-center">
+      
+      <!-- Balance Counter with Official 3D Coin -->
+      <div class="flex items-center justify-center gap-3">
+        <img src="https://i.ibb.co/JRQgG9pd/free-tiktok-coin-3d-icon-png-download.webp" 
+             alt="TikTok Coin" 
+             class="w-10 h-10 sm:w-11 sm:h-11 object-contain drop-shadow-[0_0_12px_rgba(254,44,85,0.6)]"
+             onerror="this.onerror=null; this.src='https://placehold.co/100x100/fe2c55/ffffff?text=Coin'">
+        <span id="coinCounter" class="text-5xl sm:text-6xl font-black tracking-tight text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.6)]">0</span>
+      </div>
+
+      <!-- Dynamic Tap Rate Badge -->
+      <div id="tapRateBadge" class="mt-2.5 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/[0.08] border border-white/10 text-xs font-semibold text-ttCyan shadow-sm backdrop-blur-md transition-all">
+        <span>+1 per tap</span>
+      </div>
+    </section>
+
+    <!-- Interactive Center 3D Coin Arena -->
+    <section class="relative z-10 flex-1 flex items-center justify-center py-2">
+      
+      <div id="tapZone" class="relative flex items-center justify-center cursor-pointer select-none touch-none">
+        
+        <!-- 3D TikTok Coin with Optical Center Shift (No fake circular discs) -->
+        <div id="coinWrapper" class="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center translate-x-2 transition-transform duration-75">
+          <img id="coinElement" 
+               src="https://i.ibb.co/JRQgG9pd/free-tiktok-coin-3d-icon-png-download.webp" 
+               alt="TikTok 3D Coin" 
+               class="w-full h-full object-contain pointer-events-none transition-all duration-75 drop-shadow-[0_20px_40px_rgba(0,0,0,0.65)]"
+               draggable="false"
+               onerror="this.onerror=null; this.src='https://placehold.co/300x300/fe2c55/ffffff?text=TikTok+Coin'">
+        </div>
+
+        <!-- Tap Particle & Shockwave Container -->
+        <div id="tapEffectsLayer" class="absolute inset-0 pointer-events-none overflow-visible"></div>
+      </div>
+    </section>
+
+    <!-- Bottom Controls: Elevated Turbo Mode (+10 Coins) -->
+    <footer class="relative z-10 w-full px-6 pb-9 pt-1 flex flex-col items-center">
+      
+      <button id="turboBtn" class="w-full py-4 rounded-3xl bg-gradient-to-r from-ttCyan via-[#7B2CBF] to-ttRed text-white font-extrabold text-base tracking-wide shadow-[0_0_30px_rgba(157,78,221,0.5)] border border-white/20 active:scale-[0.97] transition-all flex items-center justify-center gap-2.5 relative overflow-hidden group">
+        
+        <!-- Button Shimmer Shine -->
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+
+        <svg class="w-5 h-5 text-yellow-300 animate-bounce" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+        </svg>
+        <span id="turboText">TURBO MODE (+10 COINS)</span>
+        <span id="turboTimer" class="hidden text-xs bg-black/40 px-2.5 py-0.5 rounded-full font-mono text-ttCyan border border-white/20">15s</span>
+      </button>
+    </footer>
+
+    <!-- 1. ACCOUNT CONNECT MODAL (Startup Onboarding with Purple Iridescence) -->
+    <div id="connectModal" class="fixed inset-0 z-50 flex items-center justify-center p-5 bg-gradient-to-b from-[#22074a]/85 via-[#110226]/90 to-[#1d053b]/90 backdrop-blur-2xl transition-all duration-300">
+      
+      <!-- Ambient Shifting Light Orbs Behind Connect Modal -->
+      <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <div class="orb-purple absolute -top-10 -left-10 w-72 h-72 rounded-full bg-[#9D4EDD]/45 blur-[75px]"></div>
+        <div class="orb-cyan absolute bottom-10 -right-10 w-72 h-72 rounded-full bg-[#25F4EE]/40 blur-[85px]"></div>
+        <div class="orb-pink absolute top-1/3 -left-16 w-60 h-60 rounded-full bg-[#FE2C55]/35 blur-[80px]"></div>
+      </div>
+
+      <div class="w-full max-w-sm rounded-3xl p-7 bg-gradient-to-b from-[#290d54]/95 via-[#1b063d]/98 to-[#100326]/98 border border-purple-400/40 shadow-[0_0_60px_rgba(157,78,221,0.5)] flex flex-col items-center text-center relative overflow-hidden">
+        
+        <!-- Official TikTok 3D Coin Badge -->
+        <div class="w-20 h-20 mb-4 flex items-center justify-center relative">
+          <div class="absolute inset-0 bg-ttCyan/30 rounded-full blur-xl animate-pulse"></div>
+          <img src="https://i.ibb.co/JRQgG9pd/free-tiktok-coin-3d-icon-png-download.webp" 
+               alt="TikTok 3D Coin" 
+               class="w-full h-full object-contain relative z-10 drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)]"
+               onerror="this.onerror=null; this.src='https://placehold.co/100x100/fe2c55/ffffff?text=Coin'">
+        </div>
+
+        <h2 class="text-2xl font-black tracking-tight text-white mb-2">TikTok Coins</h2>
+        <p class="text-sm font-medium text-white/80 mb-6">Enter your TikTok username to sync coins</p>
+
+        <!-- Initial Connect Form -->
+        <div id="connectFormView" class="w-full flex flex-col gap-3.5">
+          <div class="relative w-full">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 font-bold text-base">@</span>
+            <input id="handleInput" 
+                   type="text" 
+                   placeholder="username" 
+                   maxlength="24"
+                   class="w-full pl-10 pr-4 py-4 rounded-2xl bg-white/[0.08] border border-white/20 focus:border-ttCyan text-white text-base font-semibold placeholder-white/40 outline-none transition-all focus:bg-white/[0.14]">
+          </div>
+
+          <button id="connectBtn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-ttCyan to-ttRed text-white font-black text-base tracking-wide shadow-[0_0_25px_rgba(37,244,238,0.45)] active:scale-95 transition-all">
+            Connect
+          </button>
+        </div>
+
+        <!-- Simulated Loading Handshake View -->
+        <div id="connectLoadingView" class="w-full flex flex-col items-center py-3 hidden">
+          <div class="w-12 h-12 border-3 border-t-ttCyan border-r-ttRed border-b-transparent border-l-transparent rounded-full animate-spin mb-4"></div>
+          <span id="connectStatusText" class="text-sm font-bold text-white/90">Connecting to TikTok server...</span>
+          <div class="w-full bg-white/10 h-2.5 rounded-full overflow-hidden mt-4">
+            <div id="connectProgressBar" class="h-full bg-gradient-to-r from-ttCyan to-ttRed w-0 transition-all duration-300"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 2. WITHDRAWAL MODAL OVERLAY (With Iridescent Purple Backdrop) -->
+    <div id="withdrawModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gradient-to-b from-[#22074a]/85 via-[#110226]/90 to-[#1d053b]/90 backdrop-blur-2xl transition-all duration-300 hidden opacity-0 pointer-events-none">
+      
+      <!-- Ambient Lights Behind Withdraw Modal -->
+      <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <div class="orb-cyan absolute -top-10 -left-10 w-72 h-72 rounded-full bg-[#25F4EE]/40 blur-[85px]"></div>
+        <div class="orb-purple absolute bottom-10 -right-10 w-72 h-72 rounded-full bg-[#9D4EDD]/45 blur-[85px]"></div>
+        <div class="orb-pink absolute top-1/2 right-1/4 w-60 h-60 rounded-full bg-[#FE2C55]/35 blur-[80px]"></div>
+      </div>
+
+      <div class="w-full max-w-[370px] rounded-3xl p-6 sm:p-7 bg-gradient-to-b from-[#290d54]/95 via-[#1b063d]/98 to-[#100326]/98 border border-purple-400/40 shadow-[0_0_60px_rgba(157,78,221,0.5)] flex flex-col items-center text-center relative overflow-hidden">
+        
+        <!-- Official TikTok 3D Coin Badge -->
+        <div class="w-16 h-16 mb-3 flex items-center justify-center relative">
+          <div class="absolute inset-0 bg-ttRed/25 rounded-full blur-xl animate-pulse"></div>
+          <img src="https://i.ibb.co/JRQgG9pd/free-tiktok-coin-3d-icon-png-download.webp" 
+               alt="TikTok 3D Coin" 
+               class="w-14 h-14 object-contain relative z-10 drop-shadow-[0_6px_12px_rgba(0,0,0,0.5)]"
+               onerror="this.onerror=null; this.src='https://placehold.co/100x100/fe2c55/ffffff?text=Coin'">
+        </div>
+
+        <!-- 1. Confirmation View (Guaranteed No Text Overflow) -->
+        <div id="withdrawInitialView" class="w-full flex flex-col items-center">
+          <h2 class="text-2xl font-black text-white mb-4">Withdraw Coins</h2>
+          
+          <div class="w-full p-4 rounded-2xl bg-white/[0.07] border border-white/15 flex flex-col gap-3 mb-5 text-left box-border">
+            <div class="flex items-center justify-between gap-3 min-w-0">
+              <span class="text-sm font-semibold text-white/60 shrink-0">Recipient:</span>
+              <span id="withdrawHandleDisplay" class="font-bold text-base text-ttCyan truncate max-w-[170px] text-right">@tiktok.creator</span>
+            </div>
+            <div class="flex items-center justify-between gap-3 min-w-0">
+              <span class="text-sm font-semibold text-white/60 shrink-0">Available:</span>
+              <div class="flex items-center gap-1.5 font-black text-xl text-white shrink-0">
+                <span id="withdrawBalanceDisplay">0</span>
+                <img src="https://i.ibb.co/JRQgG9pd/free-tiktok-coin-3d-icon-png-download.webp" 
+                     alt="Coin" 
+                     class="w-5 h-5 object-contain inline-block">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 w-full">
+            <button id="withdrawCancelBtn" class="flex-1 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white/90 font-bold text-sm tracking-wide transition-all active:scale-95">
+              Cancel
+            </button>
+            <button id="withdrawConfirmBtn" class="flex-[1.5] py-3.5 rounded-2xl bg-gradient-to-r from-ttCyan to-ttRed text-white font-black text-sm sm:text-base tracking-wide shadow-[0_0_20px_rgba(37,244,238,0.4)] active:scale-95 transition-all">
+              Send to Account
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Transfer Sequence Loading View (Clean, Spacious & Beautiful) -->
+        <div id="withdrawLoadingView" class="w-full flex flex-col items-center py-4 hidden">
+          
+          <h3 class="text-2xl font-black text-white mb-2">Transferring Coins</h3>
+          
+          <p class="text-sm text-white/80 font-medium mb-6">
+            Sending <span id="withdrawLoadingAmount" class="font-black text-ttCyan text-lg">0</span> coins to <span id="withdrawTransferTarget" class="font-bold text-white text-base">@tiktok.creator</span>
+          </p>
+
+          <!-- Smooth Progress Bar -->
+          <div class="w-full bg-white/10 h-3 rounded-full overflow-hidden p-0.5 border border-white/10 shadow-inner mb-3">
+            <div id="withdrawProgressBar" class="h-full bg-gradient-to-r from-ttCyan via-purple-500 to-ttRed w-0 rounded-full transition-all duration-300 shadow-[0_0_15px_rgba(37,244,238,0.6)]"></div>
+          </div>
+
+          <!-- Status Indicator & Percentage -->
+          <div class="w-full flex justify-between items-center px-1">
+            <div class="flex items-center gap-2">
+              <div class="w-3.5 h-3.5 border-2 border-white/30 border-t-ttCyan rounded-full animate-spin"></div>
+              <span id="withdrawStatusText" class="text-xs font-semibold text-white/80">Connecting to TikTok API...</span>
+            </div>
+            <span id="withdrawProgressPercent" class="text-xs text-ttCyan font-mono font-bold">0%</span>
+          </div>
+
+        </div>
+
+        <!-- 3. Clean Success View -->
+        <div id="withdrawSuccessView" class="w-full flex flex-col items-center py-2 hidden">
+          <div class="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-400/50 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(16,185,129,0.35)]">
+            <svg class="w-9 h-9 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h3 class="text-3xl font-black text-white mb-2">Sent!</h3>
+          <p class="text-base sm:text-lg text-white/90 font-medium mb-6 leading-relaxed">
+            <span id="withdrawSentAmount" class="font-black text-xl text-ttCyan">0</span> coins transferred to <br><span id="withdrawSentHandle" class="font-black text-lg text-white">@username</span>
+          </p>
+          <button id="withdrawSuccessDoneBtn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-ttCyan to-ttRed text-white font-black text-base tracking-wide shadow-[0_0_25px_rgba(37,244,238,0.45)] active:scale-95 transition-all">
+            Done
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    /* State Management */
+    let balance = 0;
+    let username = '@tiktok.creator';
+    let soundEnabled = true;
+    let isTurboActive = false;
+    let isTurboCooldown = false;
+    let turboRemainingTime = 15;
+    let turboTimerInterval = null;
+
+    /* DOM Element Cache */
+    const coinCounter = document.getElementById('coinCounter');
+    const tapRateBadge = document.getElementById('tapRateBadge');
+    const coinWrapper = document.getElementById('coinWrapper');
+    const coinElement = document.getElementById('coinElement');
+    const tapZone = document.getElementById('tapZone');
+    const tapEffectsLayer = document.getElementById('tapEffectsLayer');
+    const creatorHandle = document.getElementById('creatorHandle');
+    const profileContainer = document.getElementById('profileContainer');
+    const soundToggleBtn = document.getElementById('soundToggleBtn');
+    const soundIconOn = document.getElementById('soundIconOn');
+    const soundIconOff = document.getElementById('soundIconOff');
+    const turboBtn = document.getElementById('turboBtn');
+    const turboText = document.getElementById('turboText');
+    const turboTimer = document.getElementById('turboTimer');
+
+    /* Modals & Forms Elements */
+    const connectModal = document.getElementById('connectModal');
+    const connectFormView = document.getElementById('connectFormView');
+    const connectLoadingView = document.getElementById('connectLoadingView');
+    const handleInput = document.getElementById('handleInput');
+    const connectBtn = document.getElementById('connectBtn');
+    const connectStatusText = document.getElementById('connectStatusText');
+    const connectProgressBar = document.getElementById('connectProgressBar');
+
+    const withdrawBtn = document.getElementById('withdrawBtn');
+    const withdrawModal = document.getElementById('withdrawModal');
+    const withdrawInitialView = document.getElementById('withdrawInitialView');
+    const withdrawLoadingView = document.getElementById('withdrawLoadingView');
+    const withdrawSuccessView = document.getElementById('withdrawSuccessView');
+    const withdrawHandleDisplay = document.getElementById('withdrawHandleDisplay');
+    const withdrawBalanceDisplay = document.getElementById('withdrawBalanceDisplay');
+    const withdrawConfirmBtn = document.getElementById('withdrawConfirmBtn');
+    const withdrawCancelBtn = document.getElementById('withdrawCancelBtn');
+    const withdrawSuccessDoneBtn = document.getElementById('withdrawSuccessDoneBtn');
+    const withdrawSentAmount = document.getElementById('withdrawSentAmount');
+    const withdrawSentHandle = document.getElementById('withdrawSentHandle');
+    const withdrawStatusText = document.getElementById('withdrawStatusText');
+    const withdrawProgressBar = document.getElementById('withdrawProgressBar');
+    const withdrawProgressPercent = document.getElementById('withdrawProgressPercent');
+    const withdrawLoadingAmount = document.getElementById('withdrawLoadingAmount');
+    const withdrawTransferTarget = document.getElementById('withdrawTransferTarget');
+
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        if (type === 'tap') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(isTurboActive ? 750 : 540, now);
+          osc.frequency.exponentialRampToValueAtTime(isTurboActive ? 1200 : 900, now + 0.07);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'turbo') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(260, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else if (type === 'success') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, index) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + index * 0.09);
+            gain.gain.setValueAtTime(0.2, now + index * 0.09);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.09 + 0.35);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + index * 0.09);
+            osc.stop(now + index * 0.09 + 0.35);
+          });
+        }
+      } catch (e) {
+        console.error('Audio playback error', e);
+      }
+    }
+
+    function updateCounterDisplay() {
+      if (coinCounter) {
+        coinCounter.textContent = balance.toLocaleString();
+      }
+    }
+
+    function createTapShockwave(x, y) {
+      const ring = document.createElement('div');
+      ring.className = 'shockwave-ring';
+      ring.style.left = `${x}px`;
+      ring.style.top = `${y}px`;
+      ring.style.width = '70px';
+      ring.style.height = '70px';
+      tapEffectsLayer.appendChild(ring);
+      setTimeout(() => ring.remove(), 600);
+    }
+
+    function createFloatingNumber(x, y, value) {
+      const textElem = document.createElement('div');
+      textElem.className = 'floating-tap-number text-3xl sm:text-4xl font-black tiktok-text-glow select-none';
+      textElem.textContent = `+${value}`;
+      textElem.style.left = `${x}px`;
+      textElem.style.top = `${y}px`;
+      tapEffectsLayer.appendChild(textElem);
+      setTimeout(() => textElem.remove(), 750);
+    }
+
+    /* Handle Coin Tap Event */
+    function handleCoinTap(event) {
+      const rect = tapZone.getBoundingClientRect();
+      const clientX = event.clientX || (event.touches && event.touches[0].clientX) || (rect.left + rect.width / 2);
+      const clientY = event.clientY || (event.touches && event.touches[0].clientY) || (rect.top + rect.height / 2);
+
+      const localX = clientX - rect.left;
+      const localY = clientY - rect.top;
+
+      const increment = isTurboActive ? 10 : 1;
+      balance += increment;
+      updateCounterDisplay();
+      playSound('tap');
+
+      // 3D tilt calculation
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const deltaX = (clientX - (rect.left + centerX)) / centerX;
+      const deltaY = (clientY - (rect.top + centerY)) / centerY;
+      const tiltX = -deltaY * 16;
+      const tiltY = deltaX * 16;
+
+      coinWrapper.style.transform = `perspective(500px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(0.92) translateX(8px)`;
+      coinElement.classList.add('coin-active-press');
+
+      clearTimeout(coinWrapper.pressTimeout);
+      coinWrapper.pressTimeout = setTimeout(() => {
+        coinWrapper.style.transform = 'perspective(500px) rotateX(0deg) rotateY(0deg) scale(1) translateX(8px)';
+        coinElement.classList.remove('coin-active-press');
+      }, 90);
+
+      createTapShockwave(localX, localY);
+      createFloatingNumber(localX, localY, increment);
+    }
+
+    function activateTurboMode() {
+      if (isTurboActive || isTurboCooldown) return;
+
+      isTurboActive = true;
+      turboRemainingTime = 15;
+      playSound('turbo');
+
+      // Add radiant glow directly to the coin silhouette (No circular disc)
+      coinElement.classList.add('coin-turbo-glow');
+      
+      tapRateBadge.innerHTML = '<span>🚀 +10 per tap</span>';
+      tapRateBadge.className = 'mt-2.5 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-ttCyan/30 to-ttRed/30 border border-ttCyan text-xs font-black text-ttCyan shadow-[0_0_15px_rgba(37,244,238,0.5)] animate-pulse';
+
+      turboBtn.classList.add('border-ttCyan', 'shadow-[0_0_35px_rgba(37,244,238,0.7)]');
+      turboText.textContent = 'TURBO ACTIVE!';
+      turboTimer.classList.remove('hidden');
+      turboTimer.textContent = `${turboRemainingTime}s`;
+
+      clearInterval(turboTimerInterval);
+      turboTimerInterval = setInterval(() => {
+        turboRemainingTime--;
+        turboTimer.textContent = `${turboRemainingTime}s`;
+
+        if (turboRemainingTime <= 0) {
+          clearInterval(turboTimerInterval);
+          deactivateTurboMode();
+        }
+      }, 1000);
+    }
+
+    function deactivateTurboMode() {
+      isTurboActive = false;
+      isTurboCooldown = true;
+
+      // Remove coin glow
+      coinElement.classList.remove('coin-turbo-glow');
+
+      tapRateBadge.innerHTML = '<span>+1 per tap</span>';
+      tapRateBadge.className = 'mt-2.5 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/[0.08] border border-white/10 text-xs font-semibold text-ttCyan shadow-sm backdrop-blur-md';
+
+      turboBtn.classList.remove('border-ttCyan', 'shadow-[0_0_35px_rgba(37,244,238,0.7)]');
+      turboBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      turboText.textContent = 'COOLDOWN (20s)';
+      turboTimer.classList.add('hidden');
+
+      let cooldown = 20;
+      const cooldownInterval = setInterval(() => {
+        cooldown--;
+        turboText.textContent = `COOLDOWN (${cooldown}s)`;
+        if (cooldown <= 0) {
+          clearInterval(cooldownInterval);
+          isTurboCooldown = false;
+          turboBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          turboText.textContent = 'TURBO MODE (+10 COINS)';
+        }
+      }, 1000);
+    }
+
+    function performConnect() {
+      const rawInput = handleInput.value.trim();
+      let cleanHandle = rawInput.replace(/^@+/, '');
+      if (!cleanHandle) cleanHandle = 'tiktok.creator';
+      username = `@${cleanHandle}`;
+
+      // Switch to loading sequence
+      connectFormView.classList.add('hidden');
+      connectLoadingView.classList.remove('hidden');
+
+      const steps = [
+        { progress: '30%', text: 'Connecting to TikTok server...' },
+        { progress: '65%', text: 'Verifying creator profile...' },
+        { progress: '100%', text: 'Connected successfully!' }
+      ];
+
+      steps.forEach((step, idx) => {
+        setTimeout(() => {
+          connectProgressBar.style.width = step.progress;
+          connectStatusText.textContent = step.text;
+
+          if (idx === steps.length - 1) {
+            playSound('success');
+            setTimeout(() => {
+              creatorHandle.textContent = username;
+              connectModal.classList.add('opacity-0', 'pointer-events-none');
+              setTimeout(() => {
+                connectModal.classList.add('hidden');
+              }, 300);
+            }, 600);
+          }
+        }, (idx + 1) * 700);
+      });
+    }
+
+    function openWithdrawModal() {
+      withdrawHandleDisplay.textContent = username;
+      withdrawBalanceDisplay.textContent = balance.toLocaleString();
+
+      withdrawInitialView.classList.remove('hidden');
+      withdrawLoadingView.classList.add('hidden');
+      withdrawSuccessView.classList.add('hidden');
+
+      withdrawModal.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        withdrawModal.classList.remove('opacity-0', 'pointer-events-none');
+      });
+    }
+
+    function closeWithdrawModal() {
+      withdrawModal.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        withdrawModal.classList.add('hidden');
+      }, 300);
+    }
+
+    function executeWithdrawal() {
+      if (balance <= 0) {
+        playSound('tap');
+        return;
+      }
+
+      const coinsToSend = balance;
+      withdrawInitialView.classList.add('hidden');
+      withdrawLoadingView.classList.remove('hidden');
+
+      if (withdrawLoadingAmount) withdrawLoadingAmount.textContent = coinsToSend.toLocaleString();
+      if (withdrawTransferTarget) withdrawTransferTarget.textContent = username;
+
+      const transferSteps = [
+        { width: '35%', percent: '35%', text: 'Connecting to TikTok API...' },
+        { width: '75%', percent: '75%', text: `Transferring ${coinsToSend} coins to ${username}...` },
+        { width: '100%', percent: '100%', text: 'Approved by TikTok!' }
+      ];
+
+      transferSteps.forEach((step, idx) => {
+        setTimeout(() => {
+          if (withdrawProgressBar) withdrawProgressBar.style.width = step.width;
+          if (withdrawProgressPercent) withdrawProgressPercent.textContent = step.percent;
+          if (withdrawStatusText) withdrawStatusText.textContent = step.text;
+
+          if (idx === transferSteps.length - 1) {
+            playSound('success');
+            balance = 0;
+            updateCounterDisplay();
+
+            setTimeout(() => {
+              withdrawLoadingView.classList.add('hidden');
+              withdrawSuccessView.classList.remove('hidden');
+              withdrawSentAmount.textContent = coinsToSend.toLocaleString();
+              withdrawSentHandle.textContent = username;
+            }, 500);
+          }
+        }, (idx + 1) * 650);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Tap Zone
+      tapZone.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        handleCoinTap(e);
+      });
+
+      // Turbo Button
+      turboBtn.addEventListener('click', activateTurboMode);
+
+      // Sound Toggle
+      soundToggleBtn.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        soundIconOn.classList.toggle('hidden', !soundEnabled);
+        soundIconOff.classList.toggle('hidden', soundEnabled);
+        if (soundEnabled) playSound('tap');
+      });
+
+      // Profile Edit
+      profileContainer.addEventListener('click', () => {
+        const newName = prompt('Enter new TikTok handle:', username.replace('@', ''));
+        if (newName && newName.trim()) {
+          username = `@${newName.trim().replace(/^@+/, '')}`;
+          creatorHandle.textContent = username;
+        }
+      });
+
+      // Connect Form Listeners
+      connectBtn.addEventListener('click', performConnect);
+      handleInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') performConnect();
+      });
+
+      // Withdraw Modal Listeners
+      withdrawBtn.addEventListener('click', openWithdrawModal);
+      withdrawCancelBtn.addEventListener('click', closeWithdrawModal);
+      withdrawConfirmBtn.addEventListener('click', executeWithdrawal);
+      withdrawSuccessDoneBtn.addEventListener('click', closeWithdrawModal);
+    });
+  </script>
+</body>
+</html>
